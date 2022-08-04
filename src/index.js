@@ -1,26 +1,24 @@
 const express = require("express");
+const axios = require("axios");
+const middlewares = require("./libs/middleware/middleware");
 const authRoutes = require("./routes/authRoutes").router;
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.PORT || 9000;
-const mongoose = require("mongoose");
-
-
-
-require("dotenv").config();
-
-// mongodb connection
-require("./libs/database/database");
+const dotenv = require("dotenv");
+dotenv.config();
 
 var cors = require("cors");
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// routes
+middlewares.setupMiddleware(app);
+
+require("./libs/database/database");
+
 app.use("/auth", authRoutes);
-app.get("/", (req, res) => {
-  res.status(200).send("welcome to api library");
-});
 
 app.listen(port, () => console.log("Server started on port", port));
+
+exports.app = app;
