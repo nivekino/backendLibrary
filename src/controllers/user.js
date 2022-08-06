@@ -14,7 +14,7 @@ const hashPasswordSync = (plainTextPwd) => {
 };
 
 const comparePassword = (plainPassword, hashPassword, done) => {
-  bcrypt.compareSync(plainPassword, hashPassword, done);
+  bcrypt.compare(plainPassword, hashPassword, done);
 };
 
 const registerUser = (data) => {
@@ -25,7 +25,7 @@ const registerUser = (data) => {
     })
       .then((user) => {
         if (user.length > 0) {
-          return reject("Email already exists");
+          return reject("Email already in use");
         } else {
           let hashePwd = crypt.hashPasswordSync(password);
           let userId = uuid.v4();
@@ -38,8 +38,10 @@ const registerUser = (data) => {
             password: hashePwd,
           });
           newUser.save();
+          resolve(
+            res.status(200).json({ message: "User created susscefully" })
+          );
         }
-        resolve(resolve);
       })
       .catch((err) => {
         reject(err);
@@ -73,7 +75,7 @@ const checkUserCredentials = (email, password) => {
   return new Promise(async (resolve, reject) => {
     let [err, user] = await to(getUserIdFromEmail(email));
     if (!err || user) {
-      crypt.comparePassword(password, user.password, (err, result) => {
+      comparePassword(password, user.password, (err, result) => {
         if (err) {
           reject(err);
         } else {
