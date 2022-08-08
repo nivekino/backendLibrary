@@ -13,17 +13,16 @@ const addBook = (req, res) => {
       !stock ||
       stock <= 0
     ) {
-      resolve(res.status(400).json({ message: "please fill all fields" }));
+      resolve(res.status(400).json({ message: "Missing data" }));
     } else {
-      
       let EDFile = req.files.files;
-      let fileName = `${uuid.v4().replace(/-/g, "")}${path.extname(
+      let nameFile = `${uuid.v4().replace(/-/g, "")}${path.extname(
         EDFile.name
       )}`;
       const fullUrl = `${req.protocol}://${req.get(
         "host"
-      )}/uploads/${fileName}`;
-      EDFile.mv(`uploads/${fileName}`);
+      )}/uploads/${nameFile}`;
+      EDFile.mv(`uploads/${nameFile}`);
 
       BooksModel.find({
         title: req.sanitize(title),
@@ -60,4 +59,140 @@ const addBook = (req, res) => {
   });
 };
 
+const getBooks = (req, res) => {
+  return new Promise(async (resolve, reject) => {
+    let { page } = req.params;
+    let limit = 8;
+    let offset = (page - 1) * limit;
+
+    let numPages = 1;
+
+    const count = await BooksModel.countDocuments();
+    numPages = Math.ceil(count / limit);
+
+    BooksModel.find({})
+      .skip(offset)
+      .limit(limit)
+      .then((books) => {
+        if (books.length > 0) {
+          resolve(res.status(200).json({ numPages: numPages, books: books }));
+        } else {
+          resolve(res.status(200).json({ message: "No books found" }));
+        }
+      })
+      .catch((err) => {
+        reject(
+          res
+            .status(500)
+            .json({ message: "Internal server error", details: err.message })
+        );
+      });
+  });
+};
+
+const getBookById = (req, res) => {
+  return new Promise(async (resolve, reject) => {
+    let { idBook } = req.params;
+    BooksModel.findById(idBook)
+      .then((book) => {
+        if (book) {
+          resolve(res.status(200).json(book));
+        } else {
+          resolve(res.status(401).json({ message: "Book not found" }));
+        }
+      })
+      .catch((err) => {
+        reject(
+          res
+            .status(500)
+            .json({ message: "Internal server error", details: err.message })
+        );
+      });
+  });
+};
+
+const getBooksByPagination = (req, res) => {
+  return new Promise(async (resolve, reject) => {
+    let { page } = req.params;
+    let limit = 8;
+    let offset = (page - 1) * limit;
+
+    let numPages = 1;
+
+    const count = await BooksModel.countDocuments();
+    numPages = Math.ceil(count / limit);
+
+    BooksModel.find({})
+      .skip(offset)
+      .limit(limit)
+      .then((books) => {
+        if (books.length > 0) {
+          resolve(res.status(200).json({ numPages: numPages, books: books }));
+        } else {
+          resolve(res.status(401).json({ message: "No books found" }));
+        }
+      })
+      .catch((err) => {
+        reject(
+          res
+            .status(500)
+            .json({ message: "Internal server error", details: err.message })
+        );
+      });
+  });
+};
+
+const searchBook = (req, res) => {
+  return new Promise(async (resolve, reject) => {
+    let { title, author, publishedYear, genre } = req.body;
+    let { page } = req.params;
+
+    let limit = 8;
+    let offset = (page - 1) * limit;
+
+    let query = {};
+    if (title) {
+      query.title = { $regex: title, $options: "i" };
+    }
+
+    if (author) {
+      query.author = { $regex: author, $options: "i" };
+    }
+    if (publishedYear) {
+      query.publishedYear = publishedYear;
+    }
+    if (genre) {
+      query.genre = { $regex: genre, $options: "i" };
+    }
+    let numPages = 1;
+
+    const count = await BooksModel.countDocuments(query);
+    numPages = Math.ceil(count / limit);
+
+    BooksModel.find(query)
+      .skip(offset)
+      .limit(limit)
+      .then((books) => {
+        if (books.length > 0) {
+          resolve(res.status(200).json({ numPages: numPages, books: books }));
+        } else {
+          resolve(
+            res.status(200).json({ message: "No books found", books: [] })
+          );
+        }
+      })
+      .catch((err) => {
+        reject(
+          res
+            .status(500)
+            .json({ message: "Internal server error", details: err.message })
+        );
+      });
+  });
+};
+
 exports.addBook = addBook;
+exports.getBooks = getBooks;
+exports.getBookById = getBookById;
+exports.getBooksByPagination = getBooksByPagination;
+exports.searchBook = searchBook;
