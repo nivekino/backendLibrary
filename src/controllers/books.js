@@ -15,14 +15,6 @@ const addBook = (req, res) => {
     ) {
       resolve(res.status(400).json({ message: "Missing data" }));
     } else {
-      let EDFile = req.files.files;
-      let nameFile = `${uuid.v4().replace(/-/g, "")}${path.extname(
-        EDFile.name
-      )}`;
-      const fullUrl = `${req.protocol}://${req.get(
-        "host"
-      )}/uploads/${nameFile}`;
-      EDFile.mv(`uploads/${nameFile}`);
 
       BooksModel.find({
         title: req.sanitize(title),
@@ -40,12 +32,9 @@ const addBook = (req, res) => {
               publishedYear: req.sanitize(publishedYear),
               genere: req.sanitize(genere),
               stock: req.sanitize(stock),
-              image: fullUrl,
             });
             newBook.save();
-            resolve(
-              res.status(200).json({ message: "Book added susscefully" })
-            );
+            resolve(resolve);
           }
         })
         .catch((err) => {

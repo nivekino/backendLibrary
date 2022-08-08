@@ -3,7 +3,6 @@ const middlewares = require("./libs/middleware/middleware");
 const authRoutes = require("./routes/authRoutes").router;
 const librarianRoutes = require("./routes/librarianRoutes").router;
 const expressSanitizer = require("express-sanitizer");
-const fileUpload = require("express-fileupload");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 
@@ -18,8 +17,6 @@ var cors = require("cors");
 app.use(cors());
 app.use(bodyParser.json());
 app.use(expressSanitizer());
-app.use(fileUpload());
-app.use("/uploads", express.static("uploads"));
 
 middlewares.setupMiddleware(app);
 
