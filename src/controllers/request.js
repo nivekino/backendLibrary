@@ -37,7 +37,6 @@ const RequestBook = (req, res, next) => {
 };
 
 const ReturnBook = (req, res, next) => {
-
   return new Promise(async (resolve, reject) => {
     let id = req.sanitize(req.body.idRequest);
 
@@ -108,7 +107,6 @@ const getMyRequest = (req, res, next) => {
 };
 
 const getRequestedBooks = (req, res, next) => {
-
   return new Promise(async (resolve, reject) => {
     let page = req.params.page;
     let { idStudent } = req.body;

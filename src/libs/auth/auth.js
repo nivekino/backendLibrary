@@ -12,9 +12,6 @@ const loginUser = async (req, res) => {
     userController.checkUserCredentials(req.body.email, req.body.password)
   );
 
-  console.log(resp);
-  console.log(err);
-
   if (err || !resp) {
     return res.status(400).json({ message: "Invalid credentials" });
   }
@@ -42,7 +39,7 @@ const createUser = async (req, res) => {
   let [err, resp] = await to(userController.registerUser(req.body));
 
   if (err || !resp) {
-    return res.status(401).json({ message: "user not created", err: err });
+    return res.status(401).json({ message: "user not created" });
   }
 
   res.status(200).json({ message: "User created!" });

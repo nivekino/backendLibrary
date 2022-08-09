@@ -24,10 +24,9 @@ const registerUser = (data) => {
       email: email,
     })
       .then((user) => {
-        if (user?.length > 0) {
+        if (user.length > 0) {
           return reject("Email already in use");
         } else {
-          console.log("User not found");
           let hashePwd = hashPasswordSync(password);
           let userId = uuid.v4();
           let newUser = new UserModel({

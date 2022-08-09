@@ -15,7 +15,6 @@ const addBook = (req, res) => {
     ) {
       resolve(res.status(400).json({ message: "Missing data" }));
     } else {
-
       BooksModel.find({
         title: req.sanitize(title),
         author: req.sanitize(author),
@@ -153,6 +152,7 @@ const searchBook = (req, res) => {
     if (genre) {
       query.genre = { $regex: genre, $options: "i" };
     }
+
     let numPages = 1;
 
     const count = await BooksModel.countDocuments(query);
