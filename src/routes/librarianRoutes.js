@@ -5,9 +5,7 @@ const booksHttpHandler = require("../controllers/books");
 const authHttpHandler = require("../libs/auth/auth");
 const requestsHttpHandler = require("../controllers/request");
 
-router
-  .route("/register")
-  .post(middlewares.isLibrarian, authHttpHandler.createUser);
+router.route("/createUsers").post(middlewares.isLibrarian, authHttpHandler.createUser);
 
 router.route("/add").post(middlewares.isLibrarian, booksHttpHandler.addBook);
 

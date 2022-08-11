@@ -36,6 +36,7 @@ const createUser = async (req, res) => {
   ) {
     return res.status(400).json({ message: "Missing data" });
   }
+
   let [err, resp] = await to(userController.registerUser(req.body));
 
   if (err || !resp) {

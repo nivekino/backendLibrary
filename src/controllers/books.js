@@ -5,27 +5,20 @@ const path = require("path");
 const addBook = (req, res) => {
   return new Promise(async (resolve, reject) => {
     let { title, author, publishedYear, genere, stock } = req.body;
-    if (
-      !title ||
-      !author ||
-      !publishedYear ||
-      !genere ||
-      !stock ||
-      stock <= 0
-    ) {
-      resolve(res.status(400).json({ message: "Missing data" }));
+    if (!title || !author || !publishedYear || !genere || !stock || stock <= 0) {
+      resolve(res.status(400).json({ message: 'Missing data' }));
     } else {
-      BooksModel.find({
+      BooksModels.find({
         title: req.sanitize(title),
         author: req.sanitize(author),
         publishedYear: req.sanitize(publishedYear),
-        genere: req.sanitize(genere),
+        genre: req.sanitize(genere),
       })
         .then((book) => {
           if (book.length > 0) {
-            resolve(res.status(401).json({ message: "Book already exists" }));
+            resolve(res.status(401).json({ message: 'Book already exists' }));
           } else {
-            let newBook = new BooksModel({
+            let newBook = new BooksModels({
               title: req.sanitize(title),
               author: req.sanitize(author),
               publishedYear: req.sanitize(publishedYear),
@@ -33,14 +26,14 @@ const addBook = (req, res) => {
               stock: req.sanitize(stock),
             });
             newBook.save();
-            resolve(resolve);
+            resolve(res.status(200).json({ message: 'Book added' }));
           }
         })
         .catch((err) => {
           reject(
             res
               .status(500)
-              .json({ message: "Internal server error", details: err.message })
+              .json({ message: 'Internal server error', details: err.message })
           );
         });
     }
@@ -55,10 +48,10 @@ const getBooks = (req, res) => {
 
     let numPages = 1;
 
-    const count = await BooksModel.countDocuments();
+    const count = await BooksModels.countDocuments();
     numPages = Math.ceil(count / limit);
 
-    BooksModel.find({})
+    BooksModels.find({})
       .skip(offset)
       .limit(limit)
       .then((books) => {
@@ -81,7 +74,7 @@ const getBooks = (req, res) => {
 const getBookById = (req, res) => {
   return new Promise(async (resolve, reject) => {
     let { idBook } = req.params;
-    BooksModel.findById(idBook)
+    BooksModels.findById(idBook)
       .then((book) => {
         if (book) {
           resolve(res.status(200).json(book));
@@ -107,10 +100,10 @@ const getBooksByPagination = (req, res) => {
 
     let numPages = 1;
 
-    const count = await BooksModel.countDocuments();
+    const count = await BooksModels.countDocuments();
     numPages = Math.ceil(count / limit);
 
-    BooksModel.find({})
+    BooksModels.find({})
       .skip(offset)
       .limit(limit)
       .then((books) => {

@@ -19,27 +19,27 @@ const comparePassword = (plainPassword, hashPassword, done) => {
 
 const registerUser = (data) => {
   return new Promise(async (resolve, reject) => {
-    let { name, lastName, email, role, password } = data;
-    UserModel.findOne({
+    let { name, lastname, email, role, password } = data;
+    UserModel.find({
       email: email,
     })
       .then((user) => {
         if (user.length > 0) {
           return reject("Email already in use");
         } else {
-          let hashePwd = hashPasswordSync(password);
+          let hashedPwd = hashPasswordSync(password);
           let userId = uuid.v4();
           let newUser = new UserModel({
             userId: userId,
             name: name,
-            lastName: lastName,
+            lastname: lastname,
             email: email,
             role: role,
-            password: hashePwd,
+            password: hashedPwd,
           });
           newUser.save();
-          resolve(resolve);
         }
+        resolve(resolve);
       })
       .catch((err) => {
         reject(err);
