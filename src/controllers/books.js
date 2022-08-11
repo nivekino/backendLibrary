@@ -5,7 +5,7 @@ const path = require("path");
 const addBook = (req, res) => {
   return new Promise(async (resolve, reject) => {
     let { title, author, publishedYear, genere, stock } = req.body;
-    if (!title || !author || !publishedYear || !genere || !stock || stock <= 0) {
+    if (!title || !author || !publishedYear || !genere || !stock) {
       resolve(res.status(400).json({ message: 'Missing data' }));
     } else {
       BooksModels.find({
