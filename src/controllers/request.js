@@ -1,12 +1,12 @@
 const RequestedModel = require("../models/RequestedModel");
-const BooksModel = require("../models/BooksModels");
+const BooksModels = require("../models/BooksModels");
 const { to } = require("../libs/to/to");
 
 const RequestBook = (req, res, next) => {
   return new Promise(async (resolve, reject) => {
     let { idBook, idStudent } = req.body;
 
-    BooksModel.findOne({ _id: idBook })
+    BooksModels.findOne({ _id: idBook })
       .then((book) => {
         if (book.stock > 0) {
           book.stock = book.stock - 1;
@@ -58,7 +58,7 @@ const ReturnBook = (req, res, next) => {
     }
 
     let [err2, result2] = await to(
-      BooksModel.findOneAndUpdate(
+      BooksModels.findOneAndUpdate(
         { _id: result.idBook },
         { $inc: { stock: 1 } },
         { new: true }

@@ -125,7 +125,7 @@ const getBooksByPagination = (req, res) => {
 
 const searchBook = (req, res) => {
   return new Promise(async (resolve, reject) => {
-    let { title, author, publishedYear, genre } = req.body;
+    let { title, author, publishedYear, genere } = req.body;
     let { page } = req.params;
 
     let limit = 8;
@@ -142,16 +142,16 @@ const searchBook = (req, res) => {
     if (publishedYear) {
       query.publishedYear = publishedYear;
     }
-    if (genre) {
-      query.genre = { $regex: genre, $options: "i" };
+    if (genere) {
+      query.genere = { $regex: genere, $options: "i" };
     }
 
     let numPages = 1;
 
-    const count = await BooksModel.countDocuments(query);
+    const count = await BooksModels.countDocuments(query);
     numPages = Math.ceil(count / limit);
 
-    BooksModel.find(query)
+    BooksModels.find(query)
       .skip(offset)
       .limit(limit)
       .then((books) => {
